@@ -14,7 +14,6 @@ namespace Lumo.Api.Services
             new Customer { Id = 3, Name = "Ayse", City = "Antalya", CreatedAt = new DateTime(2025, 1, 10) },
             new Customer { Id = 4, Name = "Fatma", City = "Izmir", CreatedAt = new DateTime(2025, 2, 20) },
             new Customer { Id = 5, Name = "Can", City = "Istanbul", CreatedAt = new DateTime(2025, 3, 1) },
-            new Customer { Id = 6, Name = "Abc", City = "boom", CreatedAt = new DateTime(2025, 4, 5) }
         };
 
         public Customer AddCustomer(CreateCustomerRequest customerRequest)
@@ -33,11 +32,6 @@ namespace Lumo.Api.Services
         public List<Customer> GetAll(int page = 1, int pageSize = 20, string? city = null)
         {
             IEnumerable<Customer> query = _customers;
-
-            if (city == "boom")
-            {
-                throw new Exception("Boom city is not allowed.");
-            }
 
             if (!string.IsNullOrEmpty(city))
             {
