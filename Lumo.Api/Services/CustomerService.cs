@@ -1,4 +1,5 @@
-﻿using Lumo.Api.DTOs;
+﻿using Lumo.Api.Data;
+using Lumo.Api.DTOs;
 using Lumo.Api.Interfaces;
 using Lumo.Api.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -7,14 +8,21 @@ namespace Lumo.Api.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly List<Customer> _customers = new List<Customer>
-{
-            new Customer { Id = 1, Name = "Ali", City = "Antalya", CreatedAt = new DateTime(2024, 11, 2) },
-            new Customer { Id = 2, Name = "Veli", City = "Istanbul", CreatedAt = new DateTime(2024, 12, 15) },
-            new Customer { Id = 3, Name = "Ayse", City = "Antalya", CreatedAt = new DateTime(2025, 1, 10) },
-            new Customer { Id = 4, Name = "Fatma", City = "Izmir", CreatedAt = new DateTime(2025, 2, 20) },
-            new Customer { Id = 5, Name = "Can", City = "Istanbul", CreatedAt = new DateTime(2025, 3, 1) },
-        };
+        //        private readonly List<Customer> _customers = new List<Customer>
+        //{
+        //            new Customer { Id = 1, Name = "Ali", City = "Antalya", CreatedAt = new DateTime(2024, 11, 2) },
+        //            new Customer { Id = 2, Name = "Veli", City = "Istanbul", CreatedAt = new DateTime(2024, 12, 15) },
+        //            new Customer { Id = 3, Name = "Ayse", City = "Antalya", CreatedAt = new DateTime(2025, 1, 10) },
+        //            new Customer { Id = 4, Name = "Fatma", City = "Izmir", CreatedAt = new DateTime(2025, 2, 20) },
+        //            new Customer { Id = 5, Name = "Can", City = "Istanbul", CreatedAt = new DateTime(2025, 3, 1) }
+        //        };
+
+        private readonly LumoDbContext _dbContext;
+
+        public CustomerService(LumoDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
 
         public Customer AddCustomer(CreateCustomerRequest customerRequest)
         {
@@ -22,16 +30,17 @@ namespace Lumo.Api.Services
             {
                 Name = customerRequest.Name,
                 City = customerRequest.City,
-                Id = _customers.Max(c => c.Id) + 1,
+                Id = _dbContext.Customers.Max(c => c.Id) + 1,
                 CreatedAt = DateTime.UtcNow
             };
-            _customers.Add(customer);
+            _dbContext.Customers.Add(customer);
+            _dbContext.SaveChanges();
             return customer;
         }
 
         public List<Customer> GetAll(int page = 1, int pageSize = 20, string? city = null)
         {
-            IEnumerable<Customer> query = _customers;
+            IEnumerable<Customer> query = _dbContext.Customers;
 
             if (!string.IsNullOrEmpty(city))
             {
@@ -44,7 +53,7 @@ namespace Lumo.Api.Services
 
         public Customer? GetById(int id)
         {
-            var customer = _customers.FirstOrDefault(c => c.Id == id);
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.Id == id);
             if (customer == null)
             {
                return null;
