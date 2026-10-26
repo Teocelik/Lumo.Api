@@ -30,7 +30,6 @@ namespace Lumo.Api.Services
             {
                 Name = customerRequest.Name,
                 City = customerRequest.City,
-                Id = _dbContext.Customers.Max(c => c.Id) + 1,
                 CreatedAt = DateTime.UtcNow
             };
             _dbContext.Customers.Add(customer);
