@@ -16,9 +16,9 @@ namespace Lumo.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var customer = _customerService.GetById(id);
+            var customer = await _customerService.GetByIdAsync(id);
             if (customer == null)
             {
                 return NotFound();
@@ -27,17 +27,17 @@ namespace Lumo.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll(int page = 1, int pageSize = 20, string? city = null)
+        public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20, string? city = null)
         {
-            var pagedCustomers = _customerService.GetAll(page, pageSize, city);
+            var pagedCustomers = await _customerService.GetAllAsync(page, pageSize, city);
             return Ok(pagedCustomers);
         }
 
 
         [HttpPost]
-        public IActionResult AddCustomer(CreateCustomerRequest customerRequest)
+        public async Task<IActionResult> AddCustomer(CreateCustomerRequest customerRequest)
         {
-            var customer = _customerService.AddCustomer(customerRequest);
+            var customer = await _customerService.AddCustomerAsync(customerRequest);
             return CreatedAtAction(nameof(GetById), new { id = customer.Id }, customer);
         }
     }
