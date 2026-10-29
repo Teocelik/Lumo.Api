@@ -6,8 +6,8 @@ namespace Lumo.Api.Interfaces
 {
     public interface ICustomerService
     {
-        public Task<Customer?> GetByIdAsync(int id);
-        public Task<List<Customer>> GetAllAsync(int page = 1, int pageSize = 20, string? city = null);
-        public Task<Customer> AddCustomerAsync(CreateCustomerRequest customerRequest);
+        public Task<CustomerResponse?> GetByIdAsync(int id);
+        public Task<List<CustomerResponse>> GetAllAsync(int page = 1, int pageSize = 20, string? city = null);
+        public Task<CustomerResponse> AddCustomerAsync(CreateCustomerRequest customerRequest);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Lumo.Api.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Lumo.Api.Models
 {
     public class Customer
     {

@@ -16,20 +16,34 @@ namespace Lumo.Api.Services
             _dbContext = dbContext;
         }
 
-        public async Task<Customer> AddCustomerAsync(CreateCustomerRequest customerRequest)
+        private CustomerResponse MapToCustomerResponse(Customer customer)
+        {
+            return new CustomerResponse
+            {
+                Id = customer.Id,
+                Name = customer.Name,
+                City = customer.City,
+                CreatedAt = customer.CreatedAt
+            };
+        }
+
+
+        public async Task<CustomerResponse> AddCustomerAsync(CreateCustomerRequest customerRequest)
         {
             var customer = new Customer
             {
                 Name = customerRequest.Name,
                 City = customerRequest.City,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
             };
-            await _dbContext.Customers.AddAsync(customer);
+
+            _dbContext.Customers.Add(customer);
             await _dbContext.SaveChangesAsync();
-            return customer;
+
+            return MapToCustomerResponse(customer);
         }
 
-        public async Task<List<Customer>> GetAllAsync(int page = 1, int pageSize = 20, string? city = null)
+        public async Task<List<CustomerResponse>> GetAllAsync(int page = 1, int pageSize = 20, string? city = null)
         {
             IQueryable<Customer> query = _dbContext.Customers;
 
@@ -38,15 +52,23 @@ namespace Lumo.Api.Services
                 query = query.Where(c => c.City == city);
             }
 
-            var pagedCustomers = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            return pagedCustomers;
+            var pagedCustomers = await query.OrderBy(c => c.Id).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var responseList = pagedCustomers.Select(c => MapToCustomerResponse(c)).ToList();
+
+            return responseList;
         }
 
-        public async Task<Customer?> GetByIdAsync(int id)
+        public async Task<CustomerResponse?> GetByIdAsync(int id)
         {
             var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == id);
-         
-            return customer;
+
+            if(customer == null)
+            {
+                return null;
+            }
+
+            return MapToCustomerResponse(customer);
         }
     }
 }
