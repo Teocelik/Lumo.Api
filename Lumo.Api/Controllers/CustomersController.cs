@@ -29,7 +29,7 @@ namespace Lumo.Api.Controllers
         }
 
         [HttpGet]
-        //[ProducesResponseType(typeof(List<CustomerResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<CustomerResponse>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(int page = 1, int pageSize = 20, string? city = null)
         {
             var pagedCustomers = await _customerService.GetAllAsync(page, pageSize, city);
@@ -38,8 +38,8 @@ namespace Lumo.Api.Controllers
 
 
         [HttpPost]
-        //[ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddCustomer(CreateCustomerRequest customerRequest)
         {
             var customer = await _customerService.AddCustomerAsync(customerRequest);
