@@ -22,6 +22,11 @@ builder.Services.AddDbContext<LumoDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+});
+
 var app = builder.Build();
 
 app.UseExceptionHandler();
