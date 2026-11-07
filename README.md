@@ -18,6 +18,7 @@ A production-style ASP.NET Core Web API for an e-commerce backend, built ticket 
 - SQL Server (LocalDB for development)
 - Swagger (Swashbuckle)
 
+
 ## Architecture
 
 ```
