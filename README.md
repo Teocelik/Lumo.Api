@@ -41,6 +41,7 @@ Unhandled exceptions bubble up to a single `GlobalExceptionHandler` registered i
 - **Centralized exception handling.** Stack traces, file paths and cookies never leak to the client; errors are logged in one place with the request method and path.
 - **Deterministic pagination.** Results are ordered by `Id` before `Skip`/`Take`, so a customer can never appear on two pages or be skipped entirely.
 - **Scoped services.** `DbContext` is scoped and not thread-safe; a service that outlived it (e.g. a singleton) would share one context across all requests and cause concurrency errors (captive dependency).
+- **EF Core migrations.** The database schema is generated from the code and version-controlled with it, so the code and the database can't drift apart (this fixed a bug where a `DATE` column silently dropped the time from `CreatedAt`).
 
 ## Getting started
 
@@ -49,10 +50,17 @@ Unhandled exceptions bubble up to a single `GlobalExceptionHandler` registered i
 1. Clone the repository
    ```
    git clone https://github.com/Teocelik/Lumo.Api.git
+   cd Lumo.Api/Lumo.Api
    ```
-2. Create a database named `TrainingDb` on `(localdb)\mssqllocaldb`
-3. Run `database/schema.sql` against it to create the tables and sample data
-4. Check the connection string in `appsettings.Development.json`
+2. Check the connection string in `appsettings.Development.json` (default: `LumoDb` on `(localdb)\mssqllocaldb`)
+3. Install the EF Core CLI tool (once per machine)
+   ```
+   dotnet tool install --global dotnet-ef
+   ```
+4. Create the database by applying the migrations
+   ```
+   dotnet ef database update
+   ```
 5. Run the API
    ```
    dotnet run
