@@ -1,5 +1,7 @@
 # Lumo.Api
 
+Live demo: https://app-lumo-teocelik-e5dra5bccjgjdher.swedencentral-01.azurewebsites.net/swagger
+
 A production-style ASP.NET Core Web API for an e-commerce backend, built ticket by ticket the way a real team ships features.
 
 ## Features
