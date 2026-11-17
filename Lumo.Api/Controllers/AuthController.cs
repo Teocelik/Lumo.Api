@@ -27,5 +27,11 @@ namespace Lumo.Api.Controllers
             }
             return Created((string?)null, user);
         }
+
+
+        public async Task<IActionResult> Login(LoginRequest loginRequest)
+        {
+            
+        }
     }
 }

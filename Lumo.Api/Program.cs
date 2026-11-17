@@ -1,6 +1,7 @@
 using Lumo.Api.Data;
 using Lumo.Api.Handlers;
 using Lumo.Api.Interfaces;
+using Lumo.Api.Models;
 using Lumo.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IUserService, UserServices>();
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.AddSingleton<ITokenService, JwtTokenService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
