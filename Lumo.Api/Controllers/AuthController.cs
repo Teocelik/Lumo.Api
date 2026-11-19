@@ -28,10 +28,18 @@ namespace Lumo.Api.Controllers
             return Created((string?)null, user);
         }
 
-
+        [HttpPost("login")]
+        [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login(LoginRequest loginRequest)
         {
-            
+            var response = await _userService.LoginUserAsync(loginRequest);
+
+            if(response == null)
+            {
+                return Problem("Invalid email or password", statusCode: StatusCodes.Status401Unauthorized);
+            }
+            return Ok(response);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Lumo.Api.Services
 
             var expiration = DateTime.UtcNow.AddHours(1);
 
-            var keyBytes = Encoding.UTF8.GetBytes(_jwtSettings.Key);
+            var keyBytes = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
             var securityKey = new SymmetricSecurityKey(keyBytes);
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 

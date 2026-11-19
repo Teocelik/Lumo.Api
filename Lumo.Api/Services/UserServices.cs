@@ -12,9 +12,11 @@ namespace Lumo.Api.Services
     public class UserServices : IUserService
     {
         private readonly LumoDbContext _dbContext;
-        public UserServices(LumoDbContext dbContext)
+        private readonly ITokenService _tokenService;
+        public UserServices(LumoDbContext dbContext, ITokenService jwtTokenService)
         {
             _dbContext = dbContext;
+            _tokenService = jwtTokenService;
         }
 
         public async Task<UserResponse?> RegisterUserAsync(CreateUserRequest userRequest)
@@ -39,34 +41,30 @@ namespace Lumo.Api.Services
 
             _dbContext.Users.Add(user);
             await _dbContext.SaveChangesAsync();
-            
+
             return new UserResponse { Id = user.Id, Email = user.Email, CreatedAt = user.CreatedAt };
         }
 
         public async Task<LoginResponse?> LoginUserAsync(LoginRequest loginRequest)
         {
-            var existingEmail = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == loginRequest.Email);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == loginRequest.Email);
 
-            if (existingEmail == null)
+            if (user == null)
             {
                 return null;
             }
 
             var passwordHasher = new PasswordHasher<User>();
+            var passwordVerificationResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginRequest.Password);
 
-            var verificationResult = passwordHasher.VerifyHashedPassword(existingEmail, existingEmail.PasswordHash, loginRequest.Password);
-
-            if (verificationResult == PasswordVerificationResult.Failed)
+            if(passwordVerificationResult == PasswordVerificationResult.Failed)
             {
                 return null;
             }
 
-            var token = new JsonWebTokenHandler();
+            var response = _tokenService.GenerateToken(user);
 
-            var tokenString = token.CreateToken(new SecurityTokenDescriptor
-            {
-
-            });
+            return response;
         }
     }
 }
