@@ -1,5 +1,6 @@
 ﻿using Lumo.Api.DTOs;
 using Lumo.Api.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lumo.Api.Controllers
@@ -28,6 +29,7 @@ namespace Lumo.Api.Controllers
             return Created((string?)null, user);
         }
 
+        
         [HttpPost("login")]
         [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]

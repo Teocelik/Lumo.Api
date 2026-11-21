@@ -1,6 +1,7 @@
 ﻿using Lumo.Api.DTOs;
 using Lumo.Api.Interfaces;
 using Lumo.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lumo.Api.Controllers
@@ -38,8 +39,10 @@ namespace Lumo.Api.Controllers
 
 
         [HttpPost]
+        [Authorize]
         [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> AddCustomer(CreateCustomerRequest customerRequest)
         {
             var customer = await _customerService.AddCustomerAsync(customerRequest);

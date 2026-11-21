@@ -1,6 +1,46 @@
-@Lumo.Api_HostAddress = http://localhost:5077
+@Lumo.Api_HostAddress = https://localhost:44329
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJMdW1vLkNsaWVudCIsImlzcyI6Ikx1bW8uQXBpIiwiZXhwIjoxNzk1MjU2NzA1LCJzdWIiOiI1IiwiZW1haWwiOiJ1c2VyckBleGFtcGxlLmNvbSIsImlhdCI6MTc5NTI1MzEwNiwibmJmIjoxNzk1MjUzMTA2fQ.vxdDsorKnmx6HjBO3syxpCHvi0vSJ4EL3a1ZBHE1NyU
 
-GET {{Lumo.Api_HostAddress}}/weatherforecast/
+### 1. Herkese açık: token olmadan liste (Beklenen: 200)
+GET https://localhost:44329/api/customers
 Accept: application/json
+
+### 2. Login: cevaptaki token'ı kopyalayıp yukarıdaki @token'a yapıştır (Beklenen: 200)
+POST {{Lumo.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "userr@example.com",
+  "password": "stringst12345"
+}
+
+### 3. Korumalı: token olmadan ekleme (Beklenen: 401)
+POST {{Lumo.Api_HostAddress}}/api/customers
+Content-Type: application/json
+
+{
+  "name": "Token Yok",
+  "city": "Antalya"
+}
+
+### 4. Korumalı: geçerli token ile ekleme (Beklenen: 201)
+POST {{Lumo.Api_HostAddress}}/api/customers
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Token Var",
+  "city": "Antalya"
+}
+
+### 5. Korumalı: bozuk token ile ekleme (Beklenen: 401)
+POST {{Lumo.Api_HostAddress}}/api/customers
+Content-Type: application/json
+Authorization: Bearer {{token}}x
+
+{
+  "name": "Sahte Token",
+  "city": "Antalya"
+}
 
 ###
