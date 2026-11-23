@@ -9,6 +9,7 @@ A production-style ASP.NET Core Web API for an e-commerce backend, built ticket 
 - List customers with **pagination** and an optional **city filter**
 - Get a single customer by id (`404` when not found)
 - Create a customer (`201 Created` with a `Location` header)
+- **JWT authentication**: registration with hashed passwords, login, and protected endpoints
 - **Input validation** with field-level `400` errors
 - **Centralized error handling** with standard `ProblemDetails` responses
 - **Swagger / OpenAPI** documentation for every status code
@@ -17,6 +18,7 @@ A production-style ASP.NET Core Web API for an e-commerce backend, built ticket 
 
 - .NET 10, ASP.NET Core Web API
 - Entity Framework Core 10
+- JWT Bearer authentication
 - SQL Server (LocalDB for development)
 - Swagger (Swashbuckle)
 
@@ -45,6 +47,7 @@ Unhandled exceptions bubble up to a single `GlobalExceptionHandler` registered i
 - **Deterministic pagination.** Results are ordered by `Id` before `Skip`/`Take`, so a customer can never appear on two pages or be skipped entirely.
 - **Scoped services.** `DbContext` is scoped and not thread-safe; a service that outlived it (e.g. a singleton) would share one context across all requests and cause concurrency errors (captive dependency).
 - **EF Core migrations.** The database schema is generated from the code and version-controlled with it, so the code and the database can't drift apart (this fixed a bug where a `DATE` column silently dropped the time from `CreatedAt`).
+- **Secure authentication.** Passwords are stored as salted hashes, never in plain text or reversible encryption; tokens carry no secrets; and a wrong email or a wrong password return the same `401`, so the API never reveals which accounts exist.
 
 ## Getting started
 
@@ -76,4 +79,14 @@ Unhandled exceptions bubble up to a single `GlobalExceptionHandler` registered i
 |---|---|---|---|
 | GET | `/api/customers?page=1&pageSize=20&city=Antalya` | Paged list, optional city filter | 200 |
 | GET | `/api/customers/{id}` | Single customer | 200, 404 |
-| POST | `/api/customers` | Create a customer | 201, 400 |
+| POST | `/api/customers` | Create a customer (requires a token) | 201, 400, 401 |
+| POST | `/api/auth/register` | Register a user | 201, 400, 409 |
+| POST | `/api/auth/login` | Log in, returns a JWT | 200, 401 |
+
+## Authentication
+
+Creating a customer requires a JWT. Reading customers is public.
+
+1. Register: `POST /api/auth/register` with an email and a password (min. 8 characters)
+2. Log in: `POST /api/auth/login` returns a token valid for 1 hour
+3. In Swagger, click **Authorize** and paste the token, or send it as `Authorization: Bearer <token>`
