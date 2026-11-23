@@ -3,6 +3,7 @@ using Lumo.Api.Handlers;
 using Lumo.Api.Interfaces;
 using Lumo.Api.Models;
 using Lumo.Api.Services;
+using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IUserService, UserServices>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddSingleton<ITokenService, JwtTokenService>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -28,9 +29,9 @@ builder.Services.AddDbContext<LumoDbContext>(options =>
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>() ?? throw new InvalidOperationException("JWT settings are not configured");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
-    AddJwtBearer(Options =>
+    AddJwtBearer(options =>
     {
-        Options.TokenValidationParameters = new TokenValidationParameters
+        options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = jwtSettings.Issuer,
@@ -48,7 +49,30 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).
 
 // 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+           Array.Empty<string>()
+        }
+    });
+});
 
 
 builder.Services.AddRouting(options =>

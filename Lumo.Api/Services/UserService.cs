@@ -9,11 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Lumo.Api.Services
 {
-    public class UserServices : IUserService
+    public class UserService : IUserService
     {
         private readonly LumoDbContext _dbContext;
         private readonly ITokenService _tokenService;
-        public UserServices(LumoDbContext dbContext, ITokenService jwtTokenService)
+        public UserService(LumoDbContext dbContext, ITokenService jwtTokenService)
         {
             _dbContext = dbContext;
             _tokenService = jwtTokenService;
