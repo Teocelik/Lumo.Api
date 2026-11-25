@@ -9,5 +9,6 @@ namespace Lumo.Api.Interfaces
         public Task<CustomerResponse?> GetByIdAsync(int id);
         public Task<List<CustomerResponse>> GetAllAsync(int page = 1, int pageSize = 20, string? city = null);
         public Task<CustomerResponse> AddCustomerAsync(CreateCustomerRequest customerRequest);
+        public Task<bool> DeleteCustomerAsync(int id);
     }
 }

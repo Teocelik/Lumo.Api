@@ -48,5 +48,21 @@ namespace Lumo.Api.Controllers
             var customer = await _customerService.AddCustomerAsync(customerRequest);
             return CreatedAtAction(nameof(GetById), new { id = customer.Id }, customer);
         }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> DeleteCustomer(int id)
+        {
+            var boolean = await _customerService.DeleteCustomerAsync(id);
+            if (!boolean)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
     }
 }

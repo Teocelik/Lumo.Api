@@ -70,5 +70,19 @@ namespace Lumo.Api.Services
 
             return MapToCustomerResponse(customer);
         }
+
+        public async Task<bool> DeleteCustomerAsync(int id)
+        {
+            var deleteCustomer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == id);
+
+            if(deleteCustomer == null)
+            {
+                return false;
+            }
+
+            _dbContext.Customers.Remove(deleteCustomer);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
     }
 }
